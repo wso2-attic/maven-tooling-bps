@@ -104,17 +104,6 @@ public class FileUtils {
 		return list;
 	}
 
-	public static File createTempDirectory() throws IOException {
-		File tempDirectory = createTempFile();
-		tempDirectory.delete();
-		tempDirectory.mkdirs();
-		return tempDirectory;
-	}
-
-	public static File createTempFile() throws IOException {
-		return File.createTempFile("maven", ".tmp");
-	}
-
 	static public void zipFolder(String srcFolder, String destZipFile) {
 		ZipOutputStream zip;
 		FileOutputStream fileWriter;

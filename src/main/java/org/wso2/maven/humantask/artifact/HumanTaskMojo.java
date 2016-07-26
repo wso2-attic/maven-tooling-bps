@@ -25,6 +25,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.wso2.maven.humantask.artifact.util.FileUtils;
 
 @Mojo(name = "buildHumanTask")
@@ -41,6 +42,13 @@ public class HumanTaskMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "${project}")
 	private MavenProject mavenProject;
+
+	/**
+	 * Maven ProjectHelper.
+	 * 
+	 * @component
+	 */
+	private MavenProjectHelper projectHelper;
 
 	private static final String BPEL_CONTENT_DIR = "htcontent";
 
