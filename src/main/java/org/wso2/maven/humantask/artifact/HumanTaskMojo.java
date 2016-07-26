@@ -50,11 +50,11 @@ public class HumanTaskMojo extends AbstractMojo {
 	 */
 	private MavenProjectHelper projectHelper;
 
-	private static final String BPEL_CONTENT_DIR = "htcontent";
+	private static final String HUMANTASK_CONTENT_DIR = "humantaskcontent";
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		File project = path;
-		File bpelContentDir = new File(project, BPEL_CONTENT_DIR);
+		File bpelContentDir = new File(project, HUMANTASK_CONTENT_DIR);
 		createZip(bpelContentDir);
 	}
 

@@ -77,10 +77,10 @@ public class FileUtils {
 			fileArray[i] = allFilesPresentInFolder.get(i);
 			log.info("FileArray name : " + allFilesPresentInFolder.get(i).getName());
 		}
-		List<File> bpelValidFileList = getFileList(fileArray);
-		if (bpelValidFileList.size() == 0) {
+		List<File> validFileList = getFileList(fileArray);
+		if (validFileList.size() == 0) {
 			throw new Exception("The selected location " + location.getName() + "(" + location.toString()
-					+ ") does not contain any bpel processes.");
+					+ ") does not contain any human task files.");
 		}
 
 		File targetFolder;
@@ -89,7 +89,7 @@ public class FileUtils {
 		bpelDataFolder.mkdirs();
 		File zipFolder = new File(bpelDataFolder, artifactLocation.getName());
 		zipFolder.mkdirs();
-		copyDirectory(artifactLocation, zipFolder, bpelValidFileList);
+		copyDirectory(artifactLocation, zipFolder, validFileList);
 		log.info("Copied Size : " + getAllFilesPresentInFolder(zipFolder).size());
 		File zipFile = new File(targetFolder, artifactName);
 		zipFolder(zipFolder.getAbsolutePath(), zipFile.toString());
