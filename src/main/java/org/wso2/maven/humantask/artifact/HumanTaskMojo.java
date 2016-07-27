@@ -74,7 +74,7 @@ public class HumanTaskMojo extends AbstractMojo {
 
 	}
 
-	public String getBPELProjectName(File project) {
+	public String getHumanTaskProjectName(File project) {
 		List<File> fileList = FileUtils.getAllFilesPresentInFolder(project);
 		String humanTaskProjectName = project.getName();
 		for (File file : fileList) {

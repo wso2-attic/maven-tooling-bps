@@ -85,15 +85,15 @@ public class FileUtils {
 
 		File targetFolder;
 		targetFolder = new File(location.getPath(), "target");
-		File bpelDataFolder = new File(targetFolder, "ht-tmp");
-		bpelDataFolder.mkdirs();
-		File zipFolder = new File(bpelDataFolder, artifactLocation.getName());
+		File humantaskDataFolder = new File(targetFolder, "ht-tmp");
+		humantaskDataFolder.mkdirs();
+		File zipFolder = new File(humantaskDataFolder, artifactLocation.getName());
 		zipFolder.mkdirs();
 		copyDirectory(artifactLocation, zipFolder, validFileList);
 		log.info("Copied Size : " + getAllFilesPresentInFolder(zipFolder).size());
 		File zipFile = new File(targetFolder, artifactName);
 		zipFolder(zipFolder.getAbsolutePath(), zipFile.toString());
-		org.apache.commons.io.FileUtils.deleteDirectory(bpelDataFolder);
+		org.apache.commons.io.FileUtils.deleteDirectory(humantaskDataFolder);
 		return zipFile;
 
 	}
