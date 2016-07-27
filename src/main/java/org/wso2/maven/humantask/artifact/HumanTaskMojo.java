@@ -54,17 +54,14 @@ public class HumanTaskMojo extends AbstractMojo {
 
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		File project = path;
-		File bpelContentDir = new File(project, HUMANTASK_CONTENT_DIR);
-		createZip(bpelContentDir);
+		File humanTaskContentDir = new File(project, HUMANTASK_CONTENT_DIR);
+		createZip(humanTaskContentDir);
 	}
 
 	public void createZip(File project) throws MojoExecutionException {
 		try {
 			String artifactType = getType();
 			String artifactName = mavenProject.getArtifactId() + "-" + mavenProject.getVersion() + "." + artifactType;
-			getLog().info("Project Name : " + project.getName());
-			getLog().info("Artifact Name : " + artifactName);
-			getLog().info("path : " + path);
 			File archive = FileUtils.createArchive(getLog(), path, project, artifactName);
 			if (archive != null && archive.exists()) {
 				mavenProject.getArtifact().setFile(archive);
@@ -72,24 +69,24 @@ public class HumanTaskMojo extends AbstractMojo {
 				throw new MojoExecutionException(archive + " is null or doesn't exist");
 			}
 		} catch (Exception e) {
-			throw new MojoExecutionException("Error while creating bpel archive", e);
+			throw new MojoExecutionException("Error while creating Human Task archive", e);
 		}
 
 	}
 
 	public String getBPELProjectName(File project) {
 		List<File> fileList = FileUtils.getAllFilesPresentInFolder(project);
-		String bpelProjectName = project.getName();
+		String humanTaskProjectName = project.getName();
 		for (File file : fileList) {
 			if (!file.isDirectory()) {
 				if (file.getName().toLowerCase().endsWith(".ht")) {
-					bpelProjectName = file.getParent();
-					return bpelProjectName;
+					humanTaskProjectName = file.getParent();
+					return humanTaskProjectName;
 				}
 
 			}
 		}
-		return bpelProjectName;
+		return humanTaskProjectName;
 	}
 
 	public void setType(String type) {
