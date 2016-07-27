@@ -82,7 +82,6 @@ public class FileUtils {
 			throw new Exception("The selected location " + location.getName() + "(" + location.toString()
 					+ ") does not contain any human task files.");
 		}
-
 		File targetFolder;
 		targetFolder = new File(location.getPath(), "target");
 		File humantaskDataFolder = new File(targetFolder, "ht-tmp");
@@ -105,14 +104,10 @@ public class FileUtils {
 	}
 
 	static public void zipFolder(String srcFolder, String destZipFile) {
-		ZipOutputStream zip;
-		FileOutputStream fileWriter;
-		try {
-			fileWriter = new FileOutputStream(destZipFile);
-			zip = new ZipOutputStream(fileWriter);
+		try (FileOutputStream fileWriter = new FileOutputStream(destZipFile);
+				ZipOutputStream zip = new ZipOutputStream(fileWriter)) {
 			addFolderContentsToZip(srcFolder, zip);
 			zip.flush();
-			zip.close();
 		} catch (IOException ex) {
 			logger.error(ERROR_CREATING_CORRESPONDING_ZIP_FILE, ex);
 		}
@@ -128,8 +123,7 @@ public class FileUtils {
 			if (!srcFile.equals(".project")) {
 				byte[] buf = new byte[1024];
 				int len;
-				try {
-					FileInputStream in = new FileInputStream(srcFile);
+				try (FileInputStream in = new FileInputStream(srcFile)) {
 					String location = folder.getName();
 					if (!path.equalsIgnoreCase("")) {
 						location = path + File.separator + folder.getName();
@@ -138,7 +132,6 @@ public class FileUtils {
 					while ((len = in.read(buf)) > 0) {
 						zip.write(buf, 0, len);
 					}
-					in.close();
 				} catch (IOException e) {
 					logger.error(ERROR_CREATING_CORRESPONDING_ZIP_FILE, e);
 				}
