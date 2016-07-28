@@ -2,6 +2,7 @@
 /target/
 .idea/
 .settings/
+*.project
 *.class
 
 # Mobile Tools for Java (J2ME)
