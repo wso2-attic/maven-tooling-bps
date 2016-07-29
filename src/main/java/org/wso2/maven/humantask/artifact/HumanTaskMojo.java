@@ -19,6 +19,7 @@ package org.wso2.maven.humantask.artifact;
 import java.io.File;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -26,7 +27,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.wso2.maven.humantask.artifact.util.FileUtils;
+import org.wso2.maven.humantask.artifact.util.FileManagementUtils;
 
 @Mojo(name = "buildHumanTask")
 public class HumanTaskMojo extends AbstractMojo {
@@ -62,7 +63,7 @@ public class HumanTaskMojo extends AbstractMojo {
 		try {
 			String artifactType = getType();
 			String artifactName = mavenProject.getArtifactId() + "-" + mavenProject.getVersion() + "." + artifactType;
-			File archive = FileUtils.createArchive(getLog(), path, project, artifactName);
+			File archive = FileManagementUtils.createArchive(path, project, artifactName);
 			if (archive != null && archive.exists()) {
 				mavenProject.getArtifact().setFile(archive);
 			} else {
@@ -75,7 +76,7 @@ public class HumanTaskMojo extends AbstractMojo {
 	}
 
 	public String getHumanTaskProjectName(File project) {
-		List<File> fileList = FileUtils.getAllFilesPresentInFolder(project);
+		List<File> fileList = (List<File>) FileUtils.listFiles(project,null,null);
 		String humanTaskProjectName = project.getName();
 		for (File file : fileList) {
 			if (!file.isDirectory()) {

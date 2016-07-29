@@ -20,87 +20,35 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.apache.maven.plugin.logging.Log;
 
-public class FileUtils {
+public class FileManagementUtils {
 
-	private static final Logger logger = Logger.getLogger(FileUtils.class);
+	private static final Logger logger = Logger.getLogger(FileManagementUtils.class);
 
 	public static final String ERROR_CREATING_CORRESPONDING_ZIP_FILE = "Error creating corresponding ZIP file";
 
-	public static void copyDirectory(File srcPath, File dstPath, List<File> filesToBeCopied) throws IOException {
-
-		if (srcPath.isDirectory()) {
-			if (!dstPath.exists()) {
-				dstPath.mkdir();
-			}
-			String files[] = srcPath.list();
-			if (files != null) {
-				for (String file : files) {
-					copyDirectory(new File(srcPath, file), new File(dstPath, file), filesToBeCopied);
-				}
-			}
-		} else {
-			if (srcPath.exists()) {
-				org.apache.commons.io.FileUtils.copyFile(srcPath, dstPath);
-			}
-		}
-	}
-
-	public static List<File> getAllFilesPresentInFolder(File srcPath) {
-		List<File> fileList = new ArrayList<File>();
-		if (srcPath.isDirectory()) {
-			String files[] = srcPath.list();
-			if (files != null) {
-				for (String file : files) {
-					fileList.addAll(getAllFilesPresentInFolder(new File(srcPath, file)));
-				}
-			}
-		} else {
-			fileList.add(srcPath);
-		}
-		return fileList;
-	}
-
-	public static File createArchive(Log log, File location, File artifactLocation, String artifactName)
+	public static File createArchive(File location, File artifactLocation, String artifactName)
 			throws Exception {
-		List<File> allFilesPresentInFolder = getAllFilesPresentInFolder(artifactLocation);
-		File[] fileArray = new File[allFilesPresentInFolder.size()];
-		for (int i = 0; i < allFilesPresentInFolder.size(); i++) {
-			fileArray[i] = allFilesPresentInFolder.get(i);
-			log.info("FileArray name : " + allFilesPresentInFolder.get(i).getName());
-		}
-		List<File> validFileList = getFileList(fileArray);
-		if (validFileList.size() == 0) {
-			throw new Exception("The selected location " + location.getName() + "(" + location.toString()
-					+ ") does not contain any human task files.");
-		}
 		File targetFolder;
 		targetFolder = new File(location.getPath(), "target");
 		File humantaskDataFolder = new File(targetFolder, "ht-tmp");
-		humantaskDataFolder.mkdirs();
+		if(!humantaskDataFolder.mkdirs()){
+			logger.error(ERROR_CREATING_CORRESPONDING_ZIP_FILE);
+		}
 		File zipFolder = new File(humantaskDataFolder, artifactLocation.getName());
-		zipFolder.mkdirs();
-		copyDirectory(artifactLocation, zipFolder, validFileList);
-		log.info("Copied Size : " + getAllFilesPresentInFolder(zipFolder).size());
+		if(!zipFolder.mkdirs()){
+			logger.error(ERROR_CREATING_CORRESPONDING_ZIP_FILE);
+		};
+		FileUtils.copyDirectory(artifactLocation, zipFolder);
 		File zipFile = new File(targetFolder, artifactName);
 		zipFolder(zipFolder.getAbsolutePath(), zipFile.toString());
 		org.apache.commons.io.FileUtils.deleteDirectory(humantaskDataFolder);
 		return zipFile;
-
-	}
-
-	public static List<File> getFileList(File[] fileList) {
-		List<File> list = new ArrayList<File>();
-		Collections.addAll(list, fileList);
-		return list;
 	}
 
 	static public void zipFolder(String srcFolder, String destZipFile) {
@@ -141,11 +89,11 @@ public class FileUtils {
 
 	static private void addFolderContentsToZip(String srcFolder, ZipOutputStream zip) {
 		File folder = new File(srcFolder);
-		String fileListe[] = folder.list();
+		String fileListArray[] = folder.list();
 		int i = 0;
-		if (fileListe != null) {
-			while (i < fileListe.length) {
-				addToZip("", srcFolder + File.separator + fileListe[i], zip);
+		if (fileListArray != null) {
+			while (i < fileListArray.length) {
+				addToZip("", srcFolder + File.separator + fileListArray[i], zip);
 				i++;
 			}
 		}
@@ -153,16 +101,17 @@ public class FileUtils {
 
 	static private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) {
 		File folder = new File(srcFolder);
-		String fileListe[] = folder.list();
+		String fileListArray[] = folder.list();
 		int i = 0;
-		while (i < fileListe.length) {
-			String newPath = folder.getName();
-			if (!path.equalsIgnoreCase("")) {
-				newPath = path + File.separator + newPath;
+		if (fileListArray != null) {
+			while (i < fileListArray.length) {
+				String newPath = folder.getName();
+				if (!path.equalsIgnoreCase("")) {
+					newPath = path + File.separator + newPath;
+				}
+				addToZip(newPath, srcFolder + File.separator + fileListArray[i], zip);
+				i++;
 			}
-			addToZip(newPath, srcFolder + File.separator + fileListe[i], zip);
-			i++;
 		}
-
 	}
 }
