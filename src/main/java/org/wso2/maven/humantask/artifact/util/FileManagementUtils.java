@@ -25,24 +25,31 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.wso2.maven.humantask.artifact.HumanTaskPluginConstants;
 
 public class FileManagementUtils {
 
 	private static final Logger logger = Logger.getLogger(FileManagementUtils.class);
 
-	public static final String ERROR_CREATING_CORRESPONDING_ZIP_FILE = "Error creating corresponding ZIP file";
-
+	/**
+	 * Creates the humantask archive for the artifact
+	 * @param location
+	 * @param artifactLocation
+	 * @param artifactName
+	 * @return created humantask archive file
+	 * @throws Exception
+	 */
 	public static File createArchive(File location, File artifactLocation, String artifactName)
 			throws Exception {
 		File targetFolder;
-		targetFolder = new File(location.getPath(), "target");
-		File humantaskDataFolder = new File(targetFolder, "ht-tmp");
+		targetFolder = new File(location.getPath(), HumanTaskPluginConstants.TARGET_FOLDER_NAME);
+		File humantaskDataFolder = new File(targetFolder, HumanTaskPluginConstants.HUMANTASK_DATA_FOLDER_NAME);
 		if(!humantaskDataFolder.mkdirs()){
-			logger.error(ERROR_CREATING_CORRESPONDING_ZIP_FILE);
+			logger.error(HumanTaskPluginConstants.ERROR_CREATING_CORRESPONDING_ZIP_FILE);
 		}
 		File zipFolder = new File(humantaskDataFolder, artifactLocation.getName());
 		if(!zipFolder.mkdirs()){
-			logger.error(ERROR_CREATING_CORRESPONDING_ZIP_FILE);
+			logger.error(HumanTaskPluginConstants.ERROR_CREATING_CORRESPONDING_ZIP_FILE);
 		};
 		FileUtils.copyDirectory(artifactLocation, zipFolder);
 		File zipFile = new File(targetFolder, artifactName);
@@ -51,16 +58,26 @@ public class FileManagementUtils {
 		return zipFile;
 	}
 
+	/**creates a zip file of the given folder
+	 * @param srcFolder
+	 * @param destZipFile
+	 */
 	static public void zipFolder(String srcFolder, String destZipFile) {
 		try (FileOutputStream fileWriter = new FileOutputStream(destZipFile);
 				ZipOutputStream zip = new ZipOutputStream(fileWriter)) {
 			addFolderContentsToZip(srcFolder, zip);
 			zip.flush();
 		} catch (IOException ex) {
-			logger.error(ERROR_CREATING_CORRESPONDING_ZIP_FILE, ex);
+			logger.error(HumanTaskPluginConstants.ERROR_CREATING_CORRESPONDING_ZIP_FILE, ex);
 		}
 	}
 
+	/**
+	 * Adds a file to a zip archive in a given path
+	 * @param path
+	 * @param srcFile
+	 * @param zip
+	 */
 	static private void addToZip(String path, String srcFile, ZipOutputStream zip) {
 
 		File folder = new File(srcFile);
@@ -73,7 +90,7 @@ public class FileManagementUtils {
 				int len;
 				try (FileInputStream in = new FileInputStream(srcFile)) {
 					String location = folder.getName();
-					if (!path.equalsIgnoreCase("")) {
+					if (!path.equalsIgnoreCase(HumanTaskPluginConstants.EMPTY_STRING)) {
 						location = path + File.separator + folder.getName();
 					}
 					zip.putNextEntry(new ZipEntry(location));
@@ -81,24 +98,35 @@ public class FileManagementUtils {
 						zip.write(buf, 0, len);
 					}
 				} catch (IOException e) {
-					logger.error(ERROR_CREATING_CORRESPONDING_ZIP_FILE, e);
+					logger.error(HumanTaskPluginConstants.ERROR_CREATING_CORRESPONDING_ZIP_FILE, e);
 				}
 			}
 		}
 	}
 
+	/**
+	 * Adds all the contents of a folder in to a zip archive
+	 * @param srcFolder
+	 * @param zip
+	 */
 	static private void addFolderContentsToZip(String srcFolder, ZipOutputStream zip) {
 		File folder = new File(srcFolder);
 		String fileListArray[] = folder.list();
 		int i = 0;
 		if (fileListArray != null) {
 			while (i < fileListArray.length) {
-				addToZip("", srcFolder + File.separator + fileListArray[i], zip);
+				addToZip(HumanTaskPluginConstants.EMPTY_STRING, srcFolder + File.separator + fileListArray[i], zip);
 				i++;
 			}
 		}
 	}
 
+	/**
+	 * Adds a folder inside a zip archive
+	 * @param path
+	 * @param srcFolder
+	 * @param zip
+	 */
 	static private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) {
 		File folder = new File(srcFolder);
 		String fileListArray[] = folder.list();
@@ -106,7 +134,7 @@ public class FileManagementUtils {
 		if (fileListArray != null) {
 			while (i < fileListArray.length) {
 				String newPath = folder.getName();
-				if (!path.equalsIgnoreCase("")) {
+				if (!path.equalsIgnoreCase(HumanTaskPluginConstants.EMPTY_STRING)) {
 					newPath = path + File.separator + newPath;
 				}
 				addToZip(newPath, srcFolder + File.separator + fileListArray[i], zip);
