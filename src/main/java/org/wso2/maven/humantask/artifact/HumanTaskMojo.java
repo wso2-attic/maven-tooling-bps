@@ -59,6 +59,10 @@ public class HumanTaskMojo extends AbstractMojo {
 		createZip(humanTaskContentDir);
 	}
 
+	/**This is used to create a zip file of the artifact
+	 * @param project
+	 * @throws MojoExecutionException
+	 */
 	public void createZip(File project) throws MojoExecutionException {
 		try {
 			String artifactType = getType();
@@ -75,16 +79,20 @@ public class HumanTaskMojo extends AbstractMojo {
 
 	}
 
+	/**
+	 * This project returns the human task project name which is used to create the zip archive name
+	 * @param project
+	 * @return
+	 */
 	public String getHumanTaskProjectName(File project) {
 		List<File> fileList = (List<File>) FileUtils.listFiles(project,null,null);
 		String humanTaskProjectName = project.getName();
 		for (File file : fileList) {
 			if (!file.isDirectory()) {
-				if (file.getName().toLowerCase().endsWith(".ht")) {
+				if (file.getName().toLowerCase().endsWith(HumanTaskPluginConstants.HUMANTASK_EXTENSION)) {
 					humanTaskProjectName = file.getParent();
 					return humanTaskProjectName;
 				}
-
 			}
 		}
 		return humanTaskProjectName;
