@@ -91,7 +91,7 @@ public class FileManagementUtils {
 				int len;
 				try (FileInputStream in = new FileInputStream(srcFile)) {
 					String location = folder.getName();
-					if (StringUtils.isBlank(path)) {
+					if (!StringUtils.isBlank(path)) {
 						location = path + File.separator + folder.getName();
 					}
 					zip.putNextEntry(new ZipEntry(location));
@@ -135,7 +135,7 @@ public class FileManagementUtils {
 		if (fileListArray != null) {
 			while (i < fileListArray.length) {
 				String newPath = folder.getName();
-				if (StringUtils.isBlank(path)) {
+				if (!StringUtils.isBlank(path)) {
 					newPath = path + File.separator + newPath;
 				}
 				addToZip(newPath, srcFolder + File.separator + fileListArray[i], zip);
