@@ -86,7 +86,7 @@ public class FileManagementUtils {
 		if (folder.isDirectory()) {
 			addFolderToZip(path, srcFile, zip);
 		} else {
-			if (!srcFile.equals(".project")) {
+			if (!".project".equals(srcFile)) {
 				byte[] buf = new byte[1024];
 				int len;
 				try (FileInputStream in = new FileInputStream(srcFile)) {
@@ -113,11 +113,11 @@ public class FileManagementUtils {
 	static private void addFolderContentsToZip(String srcFolder, ZipOutputStream zip) {
 		File folder = new File(srcFolder);
 		String fileListArray[] = folder.list();
-		int i = 0;
+		int fileIndex = 0;
 		if (fileListArray != null) {
-			while (i < fileListArray.length) {
-				addToZip(HumanTaskPluginConstants.EMPTY_STRING, srcFolder + File.separator + fileListArray[i], zip);
-				i++;
+			while (fileIndex < fileListArray.length) {
+				addToZip(HumanTaskPluginConstants.EMPTY_STRING, srcFolder + File.separator + fileListArray[fileIndex], zip);
+				fileIndex++;
 			}
 		}
 	}
@@ -131,15 +131,15 @@ public class FileManagementUtils {
 	static private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) {
 		File folder = new File(srcFolder);
 		String fileListArray[] = folder.list();
-		int i = 0;
+		int fileIndex = 0;
 		if (fileListArray != null) {
-			while (i < fileListArray.length) {
+			while (fileIndex < fileListArray.length) {
 				String newPath = folder.getName();
 				if (!StringUtils.isBlank(path)) {
 					newPath = path + File.separator + newPath;
 				}
-				addToZip(newPath, srcFolder + File.separator + fileListArray[i], zip);
-				i++;
+				addToZip(newPath, srcFolder + File.separator + fileListArray[fileIndex], zip);
+				fileIndex++;
 			}
 		}
 	}
