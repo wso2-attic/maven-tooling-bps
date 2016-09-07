@@ -24,6 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.wso2.maven.humantask.artifact.HumanTaskPluginConstants;
 
@@ -90,7 +91,7 @@ public class FileManagementUtils {
 				int len;
 				try (FileInputStream in = new FileInputStream(srcFile)) {
 					String location = folder.getName();
-					if (!path.equalsIgnoreCase(HumanTaskPluginConstants.EMPTY_STRING)) {
+					if (StringUtils.isBlank(path)) {
 						location = path + File.separator + folder.getName();
 					}
 					zip.putNextEntry(new ZipEntry(location));
@@ -134,7 +135,7 @@ public class FileManagementUtils {
 		if (fileListArray != null) {
 			while (i < fileListArray.length) {
 				String newPath = folder.getName();
-				if (!path.equalsIgnoreCase(HumanTaskPluginConstants.EMPTY_STRING)) {
+				if (StringUtils.isBlank(path)) {
 					newPath = path + File.separator + newPath;
 				}
 				addToZip(newPath, srcFolder + File.separator + fileListArray[i], zip);
